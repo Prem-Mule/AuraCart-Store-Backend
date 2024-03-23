@@ -39,7 +39,7 @@ app.use(`/images`, express.static("upload/images"));
 app.post("/upload", upload.single(`product`), (req, res, next) => {
   res.json({
     success: 1,
-    image_url: `http://localhost:${port}/images/${req.file.filename}`,
+    image_url: `${process.env.baseURL}/images/${req.file.filename}`,
     Details: req.file,
   });
 });
@@ -120,7 +120,7 @@ const fetchuser = async (req, res, next) => {
       .send({ error: "Please authenticate using valid token" });
   } else {
     try {
-      const data = jwt.verify(token, "secret_ecom");
+      const data = jwt.verify(token, process.env.secret_token);
       console.log("data", data);
       req.user = data.user;
 
@@ -220,7 +220,7 @@ app.post("/signup", async (req, res) => {
       id: user.id,
     },
   };
-  const token = jwt.sign(data, "secret_ecom");
+  const token = jwt.sign(data, process.env.secret_token);
   return res.json({ success: true, token });
 });
 
@@ -236,7 +236,7 @@ app.post("/login", async (req, res) => {
     const data = {
       user: { id: user.id },
     };
-    const token = jwt.sign(data, "secret_ecom");
+    const token = jwt.sign(data, process.env.secret_token);
     return res
       .status(200)
       .json({ success: true, msg: "Login Successfull", token });
